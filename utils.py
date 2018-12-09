@@ -13,14 +13,20 @@ def open_image(image_name, colors):
     img = Image.fromarray(img)
     return img
 
+
 class ProteinDataset(Dataset):
     def __init__(self, csv_file, images_dir,
-                 colors=['red', 'green', 'blue'], transforms=None):
+                 colors=['red', 'green', 'blue'], 
+                 idxs=None, transforms=None):
         csv_content = pd.read_csv(csv_file)
-        self._filenames = csv_content['Id'].tolist()        
+        self._filenames = np.array(csv_content['Id'].tolist())
         self._labels = MultiLabelBinarizer().fit_transform([tuple(int(i) for i in item.split(' ')) 
                                                             for item in  csv_content['Target'].tolist()])
         assert len(self._filenames) == len(self._labels)
+        if idxs is not None:
+            self._filenames = self._filenames[idxs]
+            self._labels = self._labels[idxs]
+        
         self._images_dir = images_dir
         self._colors = colors        
         self._transforms = transforms
