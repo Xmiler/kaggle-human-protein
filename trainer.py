@@ -1,4 +1,5 @@
-import matplotlib as plt
+from matplotlib import pyplot as plt
+from pathlib import Path
 from functools import partial
 import json
 
@@ -218,4 +219,4 @@ class Trainer:
 
     def store(self):
         torch.save(self.model.state_dict(), '%s.pth' % self.version)
-        json.dump(trainer.statistics, Path('%s.stat.json' % self.version).open('w'))
+        json.dump(self.statistics, Path('%s.stat.json' % self.version).open('w'))
