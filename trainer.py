@@ -1,13 +1,27 @@
 import matplotlib as plt
 from functools import partial
+import json
 
 import numpy as np
 
 import torch
+from sklearn.metrics import f1_score
 from livelossplot import PlotLosses
 
 
 liveloss = PlotLosses()
+
+
+def get_max_value(item):
+    return np.array([item2[1] for item2 in item]).max()
+def get_max_thr(item):
+    ind = np.array([item2[1] for item2 in item]).argmax()
+    return item[ind][0]
+
+def calculate_f1s(gt, preds):
+    return [('%.1f'%thr, f1_score(gt, preds > thr, average='macro')) for thr in np.arange(.1, 1.,.1)]
+def calculate_accs(gt, preds):
+    return [('%.1f'%thr, (gt == (preds > thr)).all(axis=1).sum()/gt.shape[0]) for thr in np.arange(.1, 1.,.1)]
 
 
 class Trainer:
